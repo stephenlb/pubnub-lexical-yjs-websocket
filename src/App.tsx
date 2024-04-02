@@ -29,7 +29,7 @@ function Placeholder() {
 
 const editorConfig = {
   editorState: null,
-  namespace: 'demo-3-aksldfjlaksdjfl',
+  namespace: 'documentID-1-architecture-details',
   nodes: [],
   // Handling of errors during update
   onError(error: Error) {
@@ -42,7 +42,7 @@ const editorConfig = {
 function initialEditorState(): void {
   const root = $getRoot();
   const paragraph = $createParagraphNode();
-  const text = $createTextNode('Welcome to collab!');
+  const text = $createTextNode('Welcome to collab!'); // TODO Load initial content from server
   paragraph.append(text);
   root.append(paragraph);
 }
