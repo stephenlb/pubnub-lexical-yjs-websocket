@@ -38,11 +38,23 @@ const editorConfig = {
   // The editor theme
   theme: ExampleTheme,
 };
+const pubnubConfig = {
+  endpoint: "wss://v6.pubnub3.com",
+  channel: editorConfig.namespace,
+  auth: '',
+  uuid: 'user-id-' + Math.random().toString(36).substr(2, 9),
+  publishKey: 'demo-36',
+  subscribeKey: 'demo-36',
+};
 
 function initialEditorState(): void {
   const root = $getRoot();
   const paragraph = $createParagraphNode();
-  const text = $createTextNode('Welcome to collab!'); // TODO Load initial content from server
+
+  // TODO Load initial content from server
+  const text = $createTextNode('Welcome to collab!'); 
+  // TODO Load initial content from server
+
   paragraph.append(text);
   root.append(paragraph);
 }
@@ -65,16 +77,11 @@ export default function App() {
             providerFactory={(id, yjsDocMap) => {
               const doc = new Y.Doc();
               yjsDocMap.set(id, doc);
-
-              const provider = new WebsocketProvider("wss://v6.pubnub3.com", id, doc, {
-                WebSocketPolyfill: PubNub,
-                params: {
-                  channel: editorConfig.namespace,
-                  auth: '',
-                  uuid: 'user-id-' + Math.random().toString(36).substr(2, 9),
-                  publishKey: 'demo-36',
-                  subscribeKey: 'demo-36',
-              }});
+              const provider = new WebsocketProvider(
+                pubnubConfig.endpoint, id, doc, {
+                  WebSocketPolyfill: PubNub,
+                  params: pubnubConfig,
+              });
 
               return provider;
             }}
