@@ -27,15 +27,18 @@ export default class PubNub {
     public setup: any;
 
     constructor(url?: string, protocols?: string) {
-        this.url = url || '';
+        console.info(`Opening PubNub WebSocket: ${url}`);
+        this.url = url || 'wss://v6.pubnub3.com?subscribeKey=demo-36&publishKey=demo-36&channel=pubnub';
         this.protocol = protocols || 'Sec-WebSocket-Protocol';
+        const params = extractParams(this.url);
         const bits = this.url.split('/');
         this.setup = {
-            tls: bits[0] === 'wss:',
             origin: bits[2],
-            publish_key: bits[3],
-            subscribe_key: bits[4],
-            channel: bits[5]
+            publishKey: params.publishKey,
+            subscribeKey: params.subscribeKey,
+            channel: params.channel,
+            authkey: params.auth,
+            uuid: params.uuid,
         };
 
         // READY STATES
@@ -73,7 +76,7 @@ export default class PubNub {
                 wasClean: true
             });
         } else {
-            // PubNub WebSocket Emulation
+            // PubNub WebSocket
             this.pubnub = PUBNUB(this.setup);
             this.pubnub.setup = this.setup;
 
@@ -109,6 +112,7 @@ export default class PubNub {
     };
 
     close = () => {
+        console.info('Closing PubNub WebSocket');
         this.pubnub.unsubscribe({ channel: this.pubnub.setup.channel });
         this.readyState = this.CLOSED;
         this.onclose({});
@@ -131,7 +135,10 @@ type Setup = {
     metadata?: object;
 };
 
-const CHANNELS = {};
+// PubNub Subscriptions
+const SUBSCRIPTIONS = {};
+
+// Channels Object with an Array of Subscriptions
 const PUBNUB = (setup: Setup): typeof PUBNUB => {
     for (let key of Object.keys(setup)) {
         (PUBNUB as any)[key] = setup[key];
@@ -160,9 +167,6 @@ PUBNUB.subscribe = (setup: Setup = {}): AsyncGenerator<any, void, unknown> => {
     let params: string = `uuid=${uuid}&auth=${authkey}${filterExp}`;
     let encoder: TextDecoder = new TextDecoder();
     let boundary: RegExp = /[\n]/g;
-    let resolver: (msg: any, payload: any) => void = () => {};
-    let promissory = (): Promise<any> => new Promise(resolve => resolver = (data) => resolve(data)); 
-    let receiver: Promise<any> = promissory();
     let reader: ReadableStreamDefaultReader | null = null;
     let response: Response | null = null;
     let buffer: string = '';
@@ -170,8 +174,10 @@ PUBNUB.subscribe = (setup: Setup = {}): AsyncGenerator<any, void, unknown> => {
     let controller: AbortController = new AbortController();
     let signal: AbortSignal = controller.signal;
 
-    // Start Stream
-    startStream();
+    // Check for comma in channel and return error if found
+    if (channel.includes(',')) {
+        throw new Error('Only one channel is allowed. Comma symbol "," found in channel name.');
+    }
 
     async function startStream(): Promise<void> {
         let uri: string = `https://${origin}/stream/${subkey}/${channel}/0/${timetoken}`;
@@ -224,9 +230,8 @@ PUBNUB.subscribe = (setup: Setup = {}): AsyncGenerator<any, void, unknown> => {
 
                 // Send message to receivers/callbacks
                 jsonmsg[0].forEach((m: any) => {
+                    //SUBSCRIPTIONS[channel].forEach( sub => sub.messages(m, jsonmsg) );
                     messages(m, jsonmsg);
-                    resolver(m, jsonmsg);
-                    receiver = promissory();
                 });
 
                 // Free successfully consumed message
@@ -243,30 +248,37 @@ PUBNUB.subscribe = (setup: Setup = {}): AsyncGenerator<any, void, unknown> => {
         else continueStream();
     }
 
-    // Subscription Structure
+    // Subscription Generator
     async function* subscription(): AsyncGenerator<any, void, unknown> {
         while (subscribed) yield await receiver;
     }
 
+    // Prepare channel subscription and start stream
+    if (!(channel in SUBSCRIPTIONS)) {
+        SUBSCRIPTIONS[channel] = [];
+        startStream();
+    }
+
     subscription.messages = (receiver: (m: any) => void) => (messages = setup.messages = receiver);
     subscription.unsubscribe = () => {
-        delete CHANNELS[channel];
+        delete SUBSCRIPTIONS[channel];
         subscribed = false;
         controller.abort();
     };
 
-    // Prevent Duplicate Subscriptions
-    let duplicates = channel.split(',').filter((channel: string) => {
-        if (channel in CHANNELS) {
-            console.log(`Already subscribed to ${channel}, resubscribing...`);
-            //subscription.unsubscribe();
-        }
-        CHANNELS[channel] = subscription;
-    });
-
+    SUBSCRIPTIONS[channel].push(subscription);
     return subscription;
 };
 
+// PubNub Unsubscribe
+PUBNUB.unsubscribe = (setup: Setup = {}): void => {
+    let channel: string = setup.channel ?? PUBNUB.channel ?? defaultChannel;
+    if (channel in SUBSCRIPTIONS) {
+        SUBSCRIPTIONS[channel].forEach(sub => sub.unsubscribe());
+    }
+};
+
+// PubNub Publish
 PUBNUB.publish = async (setup: Setup = {}): Promise<Response | false> => {
     let pubkey: string = setup.pubkey ?? PUBNUB.publishKey ?? defaultPubkey;
     let subkey: string = setup.subkey ?? PUBNUB.subscribeKey ?? defaultSubkey;
@@ -286,3 +298,16 @@ PUBNUB.publish = async (setup: Setup = {}): Promise<Response | false> => {
         return false;
     }
 };
+
+// Extract URI Parameters
+function extractParams(uri: string): object {
+    let params: object = {};
+    let parts: string[] = uri.split('?');
+    if (parts.length > 1) {
+        parts[1].split('&').forEach(part => {
+            let pair: string[] = part.split('=');
+            params[pair[0]] = decodeURIComponent(pair[1]);
+        });
+    }
+    return params;
+}

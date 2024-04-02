@@ -24,12 +24,12 @@ import ToolbarPlugin from './plugins/ToolbarPlugin';
 import TreeViewPlugin from './plugins/TreeViewPlugin';
 
 function Placeholder() {
-  return <div className="editor-placeholder">Enter some rich text...</div>;
+  return <div className="editor-placeholder">Loading...</div>;
 }
 
 const editorConfig = {
   editorState: null,
-  namespace: 'demo-3',
+  namespace: 'demo-3-aksldfjlaksdjfl',
   nodes: [],
   // Handling of errors during update
   onError(error: Error) {
@@ -68,14 +68,16 @@ export default function App() {
               yjsDocMap.set(id, doc);
 
               const provider = new WebsocketProvider(
-                "wss://v6.pubnub3.com",
-                id,
-                doc,
-                {
-                  params: { auth: '' }, // TODO pubkey subkey id/channel etc.
+                "wss://v6.pubnub3.com", id, doc, {
                   WebSocketPolyfill: PubNub,
-                },
-              );
+                  params: {
+                    channel: editorConfig.namespace,
+                    auth: '',
+                    uuid: 'user-id-' + Math.random().toString(36).substr(2, 9),
+                    publishKey: 'demo-36',
+                    subscribeKey: 'demo-36',
+                  }
+              });
 
               return provider;
             }}
