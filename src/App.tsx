@@ -8,11 +8,12 @@
 import {$getRoot, $createParagraphNode, $createTextNode} from 'lexical';
 import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
 import {LexicalComposer} from '@lexical/react/LexicalComposer';
+//import {LexicalEditor} from '@lexical/react';
 import {ContentEditable} from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
 import {RichTextPlugin} from '@lexical/react/LexicalRichTextPlugin';
-import * as React from 'react';
+//import * as React from 'react';
 import * as Y from 'yjs';
 import {WebsocketProvider} from 'y-websocket';
 import {CollaborationPlugin} from "@lexical/react/LexicalCollaborationPlugin";
@@ -38,7 +39,7 @@ const editorConfig = {
   theme: ExampleTheme,
 };
 
-function initialEditorState(editor: LexicalEditor): void {
+function initialEditorState(): void {
   const root = $getRoot();
   const paragraph = $createParagraphNode();
   const text = $createTextNode('Welcome to collab!');
