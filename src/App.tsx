@@ -58,7 +58,6 @@ export default function App() {
             placeholder={<Placeholder />}
             ErrorBoundary={LexicalErrorBoundary}
           />
-          <HistoryPlugin />
           <AutoFocusPlugin />
           <TreeViewPlugin />
           <CollaborationPlugin
@@ -67,17 +66,15 @@ export default function App() {
               const doc = new Y.Doc();
               yjsDocMap.set(id, doc);
 
-              const provider = new WebsocketProvider(
-                "wss://v6.pubnub3.com", id, doc, {
-                  WebSocketPolyfill: PubNub,
-                  params: {
-                    channel: editorConfig.namespace,
-                    auth: '',
-                    uuid: 'user-id-' + Math.random().toString(36).substr(2, 9),
-                    publishKey: 'demo-36',
-                    subscribeKey: 'demo-36',
-                  }
-              });
+              const provider = new WebsocketProvider("wss://v6.pubnub3.com", id, doc, {
+                WebSocketPolyfill: PubNub,
+                params: {
+                  channel: editorConfig.namespace,
+                  auth: '',
+                  uuid: 'user-id-' + Math.random().toString(36).substr(2, 9),
+                  publishKey: 'demo-36',
+                  subscribeKey: 'demo-36',
+              }});
 
               return provider;
             }}
