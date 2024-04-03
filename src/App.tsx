@@ -5,15 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
+//import {LexicalEditor} from '@lexical/react';
+import * as React from 'react';
+
 import {$getRoot, $createParagraphNode, $createTextNode} from 'lexical';
 import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
 import {LexicalComposer} from '@lexical/react/LexicalComposer';
-//import {LexicalEditor} from '@lexical/react';
 import {ContentEditable} from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
 import {RichTextPlugin} from '@lexical/react/LexicalRichTextPlugin';
-//import * as React from 'react';
 import * as Y from 'yjs';
 import {WebsocketProvider} from 'y-websocket';
 import {CollaborationPlugin} from "@lexical/react/LexicalCollaborationPlugin";
@@ -21,7 +22,6 @@ import {CollaborationPlugin} from "@lexical/react/LexicalCollaborationPlugin";
 import PubNub from './PubNub';
 import ExampleTheme from './ExampleTheme';
 import ToolbarPlugin from './plugins/ToolbarPlugin';
-import TreeViewPlugin from './plugins/TreeViewPlugin';
 
 function Placeholder() {
   return <div className="editor-placeholder">Loading...</div>;
@@ -30,13 +30,13 @@ function Placeholder() {
 const editorConfig = {
   editorState: null,
   namespace: 'documentID-1-architecture-details',
-  nodes: [],
+  //nodes: [],
   // Handling of errors during update
   onError(error: Error) {
     throw error;
   },
   // The editor theme
-  theme: ExampleTheme,
+  theme: {},
 };
 const pubnubConfig = {
   endpoint: "wss://v6.pubnub3.com",
@@ -52,7 +52,7 @@ function initialEditorState(): void {
   const paragraph = $createParagraphNode();
 
   // TODO Load initial content from server
-  const text = $createTextNode('Welcome to collab!'); 
+  const text = $createTextNode('Hello, from PubNub!'); 
   // TODO Load initial content from server
 
   paragraph.append(text);
@@ -70,10 +70,8 @@ export default function App() {
             placeholder={<Placeholder />}
             ErrorBoundary={LexicalErrorBoundary}
           />
-          <AutoFocusPlugin />
-          <TreeViewPlugin />
           <CollaborationPlugin
-            id="yjs-plugin"
+            id="yjs-collaboration-plugin"
             providerFactory={(id, yjsDocMap) => {
               const doc = new Y.Doc();
               yjsDocMap.set(id, doc);
