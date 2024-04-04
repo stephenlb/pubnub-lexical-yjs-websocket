@@ -81,6 +81,7 @@ export default class PubNub {
             this.pubnub.setup = this.setup;
 
             this.pubnub.subscribe({
+                timetoken: '1000',
                 channel: this.setup.channel,
                 disconnect: this.onerror,
                 reconnect: this.onopen,
@@ -228,7 +229,7 @@ PUBNUB.subscribe = (setup: Setup = {}): AsyncGenerator<any, void, unknown> => {
             try {
                 let jsonmsg = JSON.parse(message);
                 if (jsonmsg[1]) {
-                    if (timetoken == '0' && !connected) {
+                    if (!connected && (+timetoken <= 10000)) {
                         connected = true;
                         connect(jsonmsg);
                     }
