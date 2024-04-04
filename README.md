@@ -1,7 +1,12 @@
-# Basic Vanilla JS example
+# Collaberative Text Editor with PubNub YJS CRDT and Lexical
 
-Here we have simplest Lexical setup in rich text configuration (`@lexical/rich-text`) with history (`@lexical/history`) and accessibility (`@lexical/dragon`) features enabled.
+**Try it out:** https://stephenlb.github.io/pubnub-lexical-yjs-websocket/
+
+![pubnub-collaberative-shared-text-document-editor-lexical](https://github.com/stephenlb/pubnub-lexical-yjs-websocket/assets/45214/422f2d9d-a25b-435f-a8d8-ae00af63c339)
 
 **Run it locally:** `npm i && npm run dev`
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/facebook/lexical/tree/main/examples/react-rich?file=src/main.ts)
+**Get PubNub API Keys:** https://admin.pubnub.com/
+
+The Lexical setup is in rich text configuration (`@lexical/rich-text`).
+
