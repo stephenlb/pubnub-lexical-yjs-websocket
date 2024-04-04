@@ -1,20 +1,17 @@
 export default class PubNub {
     private url: string;
-    private protocol: string | string[] | undefined;
-
-    static readonly CONNECTING: number = 0; // The connection is not yet open.
-    static readonly OPEN: number = 1; // The connection is open and ready to communicate.
-    static readonly CLOSING: number = 2; // The connection is in the process of closing.
-    static readonly CLOSED: number = 3; // The connection is closed or couldn't be opened.
-
-    static readonly CLOSE_NORMAL: number = 1000;
-    static readonly CLOSE_GOING_AWAY: number = 1001;
-    static readonly CLOSE_PROTOCOL_ERROR: number = 1002;
-    static readonly CLOSE_UNSUPPORTED: number = 1003;
-    static readonly CLOSE_TOO_LARGE: number = 1004;
-    static readonly CLOSE_NO_STATUS: number = 1005;
-    static readonly CLOSE_ABNORMAL: number = 1006;
-
+    public protocol: string;
+    public CONNECTING: number;
+    public OPEN: number;
+    public CLOSING: number;
+    public CLOSED: number;
+    public CLOSE_NORMAL: number;
+    public CLOSE_GOING_AWAY: number;
+    public CLOSE_PROTOCOL_ERROR: number;
+    public CLOSE_UNSUPPORTED: number;
+    public CLOSE_TOO_LARGE: number;
+    public CLOSE_NO_STATUS: number;
+    public CLOSE_ABNORMAL: number;
     public onclose: Function;
     public onerror: Function;
     public onmessage: Function;
@@ -29,12 +26,11 @@ export default class PubNub {
     public pubnub: any;
     public setup: any;
 
-    constructor(url: string | URL, protocols?: string | string[] | undefined) {
-        this.url = (url ?? "wss://v6.pubnub3.com?subscribeKey=demo-36&publishKey=demo-36&channel=pubnub").toString();
-        this.protocol = (protocols ?? "Sec-WebSocket-Protocol").toString();
-        console.info(`Opening PubNub WebSocket: ${this.url} | ${this.protocol}`);
-        let params: { [key: string]: string } = {};
-        params = extractParams(this.url);
+    constructor(url?: string, protocols?: string) {
+        console.info(`Opening PubNub WebSocket: ${url}`);
+        this.url = url || 'wss://v6.pubnub3.com?subscribeKey=demo-36&publishKey=demo-36&channel=pubnub';
+        this.protocol = protocols || 'Sec-WebSocket-Protocol';
+        const params = extractParams(this.url);
         const bits = this.url.split('/');
         this.setup = {
             origin: bits[2],
@@ -45,6 +41,21 @@ export default class PubNub {
             uuid: params.userId,
         };
 
+        // READY STATES
+        this.CONNECTING = 0;
+        this.OPEN = 1;
+        this.CLOSING = 2;
+        this.CLOSED = 3;
+
+        // CLOSE STATES
+        this.CLOSE_NORMAL = 1000;
+        this.CLOSE_GOING_AWAY = 1001;
+        this.CLOSE_PROTOCOL_ERROR = 1002;
+        this.CLOSE_UNSUPPORTED = 1003;
+        this.CLOSE_TOO_LARGE = 1004;
+        this.CLOSE_NO_STATUS = 1005;
+        this.CLOSE_ABNORMAL = 1006;
+
         // Events Default
         this.onclose = this.onerror = this.onmessage = this.onopen = this.onsend = () => {};
 
@@ -54,13 +65,13 @@ export default class PubNub {
         this.bufferedAmount = 0;
         this.transmitting = false;
         this.buffer = [];
-        this.readyState = PubNub.CONNECTING;
+        this.readyState = this.CONNECTING;
 
         // Close if no setup.
         if (!this.url) {
-            this.readyState = PubNub.CLOSED;
+            this.readyState = this.CLOSED;
             this.onclose({
-                code: PubNub.CLOSE_ABNORMAL,
+                code: this.CLOSE_ABNORMAL,
                 reason: 'Missing URL',
                 wasClean: true
             });
@@ -75,7 +86,7 @@ export default class PubNub {
                 reconnect: this.onopen,
                 error: () => {
                     this.onclose({
-                        code: PubNub.CLOSE_ABNORMAL,
+                        code: this.CLOSE_ABNORMAL,
                         reason: 'Missing URL',
                         wasClean: false
                     });
@@ -85,7 +96,7 @@ export default class PubNub {
                     this.onmessage({ data: decodedMessage });
                 },
                 connect: () => {
-                    this.readyState = PubNub.OPEN;
+                    this.readyState = this.OPEN;
                     this.onopen();
                 }
             });
@@ -103,7 +114,7 @@ export default class PubNub {
     close = () => {
         console.info('Closing PubNub WebSocket');
         this.pubnub.unsubscribe({ channel: this.pubnub.setup.channel });
-        this.readyState = PubNub.CLOSED;
+        this.readyState = this.CLOSED;
         this.onclose({});
     };
 }
