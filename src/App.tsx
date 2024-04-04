@@ -28,7 +28,7 @@ function Placeholder() {
 
 const editorConfig = {
   editorState: null,
-  namespace: 'documentID-2-architecture-details',
+  namespace: 'documentID-3-policy-management-doc',
   //nodes: [],
   // Handling of errors during update
   onError(error: Error) {
