@@ -5,15 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import * as React from 'react';
+//import * as React from 'react';
 import * as Y from 'yjs';
 import {$getRoot, $createParagraphNode, $createTextNode} from 'lexical';
-import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
+//import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
 import {LexicalComposer} from '@lexical/react/LexicalComposer';
 import {ContentEditable} from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
-import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
+//import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
 import {RichTextPlugin} from '@lexical/react/LexicalRichTextPlugin';
+import {Provider} from '@lexical/yjs';
 import {WebsocketProvider} from 'y-websocket';
 import {CollaborationPlugin} from "@lexical/react/LexicalCollaborationPlugin";
 
@@ -27,14 +28,14 @@ function Placeholder() {
 
 const editorConfig = {
   editorState: null,
-  namespace: 'documentID-1-architecture-details',
+  namespace: 'documentID-2-architecture-details',
   //nodes: [],
   // Handling of errors during update
   onError(error: Error) {
     throw error;
   },
   // The editor theme
-  theme: {},
+  theme: ExampleTheme,
 };
 const pubnubConfig = {
   endpoint: "wss://v6.pubnub3.com",
@@ -78,9 +79,9 @@ export default function App() {
               yjsDocMap.set(id, doc);
               const provider = new WebsocketProvider(
                 pubnubConfig.endpoint, id, doc, {
-                  WebSocketPolyfill: PubNub,
+                  WebSocketPolyfill: PubNub as unknown as typeof WebSocket,
                   params: pubnubConfig,
-              });
+              }) as unknown as Provider;
               return provider;
             }}
             id="yjs-collaboration-plugin"
