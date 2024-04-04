@@ -38,7 +38,7 @@ export default class PubNub {
             subscribeKey: params.subscribeKey,
             channel: params.channel,
             authkey: params.auth,
-            uuid: params.uuid,
+            uuid: params.userId,
         };
 
         // READY STATES

@@ -5,9 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-//import {LexicalEditor} from '@lexical/react';
 import * as React from 'react';
-
+import * as Y from 'yjs';
 import {$getRoot, $createParagraphNode, $createTextNode} from 'lexical';
 import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
 import {LexicalComposer} from '@lexical/react/LexicalComposer';
@@ -15,7 +14,6 @@ import {ContentEditable} from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
 import {RichTextPlugin} from '@lexical/react/LexicalRichTextPlugin';
-import * as Y from 'yjs';
 import {WebsocketProvider} from 'y-websocket';
 import {CollaborationPlugin} from "@lexical/react/LexicalCollaborationPlugin";
 
@@ -42,7 +40,8 @@ const pubnubConfig = {
   endpoint: "wss://v6.pubnub3.com",
   channel: editorConfig.namespace,
   auth: '',
-  uuid: 'user-id-' + Math.random().toString(36).substr(2, 9),
+  username: 'user-' + Math.random().toString(36).substr(2, 4),
+  userId: 'user-id-' + Math.random().toString(36).substr(2, 9),
   publishKey: 'demo-36',
   subscribeKey: 'demo-36',
 };
@@ -64,14 +63,16 @@ export default function App() {
     <LexicalComposer initialConfig={editorConfig}>
       <div className="editor-container">
         <ToolbarPlugin />
-        <div className="editor-inner">
+        <div id="yjs-collaboration-plugin-container" className="editor-inner">
           <RichTextPlugin
             contentEditable={<ContentEditable className="editor-input" />}
             placeholder={<Placeholder />}
             ErrorBoundary={LexicalErrorBoundary}
           />
           <CollaborationPlugin
-            id="yjs-collaboration-plugin"
+            // cursorColor="rgba(255, 0, 255, 0.5)"
+            // cursorsContainerRef={document.getElementById('#yjs-collaboration-plugin-container')}
+            // username={pubnubConfig.username}
             providerFactory={(id, yjsDocMap) => {
               const doc = new Y.Doc();
               yjsDocMap.set(id, doc);
@@ -80,13 +81,9 @@ export default function App() {
                   WebSocketPolyfill: PubNub,
                   params: pubnubConfig,
               });
-
               return provider;
             }}
-            // Optional initial editor state in case collaborative Y.Doc won't
-            // have any existing data on server. Then it'll user this value to populate editor. 
-            // It accepts same type of values as LexicalComposer editorState
-            // prop (json string, state object, or a function)
+            id="yjs-collaboration-plugin"
             initialEditorState={initialEditorState}
             shouldBootstrap={true}
           />
