@@ -81,7 +81,7 @@ export default class PubNub {
             this.pubnub.setup = this.setup;
 
             this.pubnub.subscribe({
-                timetoken: '1000',
+                backfill: true,
                 channel: this.setup.channel,
                 disconnect: this.onerror,
                 reconnect: this.onopen,
@@ -130,6 +130,7 @@ type Setup = {
     filter?: string;
     authkey?: string;
     timetoken?: string;
+    backfill?: boolean;
     uuid?: string;
     pubkey?: string;
     message?: any;
@@ -165,6 +166,7 @@ PUBNUB.subscribe = (setup: Setup = {}): AsyncGenerator<any, void, unknown> => {
     let filter: string = setup.filter ?? PUBNUB.filter ?? '';
     let authkey: string = setup.authkey ?? PUBNUB.authKey ?? '';
     let timetoken: string = setup.timetoken ?? '0';
+    let backfill: boolean = setup.backfill ?? false;
     let filterExp: string = `${filter ? '&filter-expr=' : ''}${encodeURIComponent(filter)}`;
     let uuid: string = setup.uuid ?? PUBNUB.uuid ?? defaultUUID;
     let params: string = `uuid=${uuid}&auth=${authkey}${filterExp}`;
@@ -229,11 +231,15 @@ PUBNUB.subscribe = (setup: Setup = {}): AsyncGenerator<any, void, unknown> => {
             try {
                 let jsonmsg = JSON.parse(message);
                 if (jsonmsg[1]) {
-                    if (!connected && (+timetoken <= 10000)) {
+                    if (!connected && timetoken == '0') {
                         connected = true;
                         connect(jsonmsg);
                     }
-                    setup.timetoken = timetoken = jsonmsg[1];
+                    timetoken = jsonmsg[1];
+                    if (backfill) {
+                        backfill = false;
+                        timetoken = '1000';
+                    }
                 }
 
                 // Send message to receivers/callbacks
@@ -247,7 +253,7 @@ PUBNUB.subscribe = (setup: Setup = {}): AsyncGenerator<any, void, unknown> => {
                 // Free successfully consumed message
                 parts[num] = '';
                 buffer = parts.filter(p => p).join('\n');
-            } catch (error) {
+            } catch (_error) {
                 // This is an unfinished chunk
                 // And JSON is unfinished in buffer.
                 // Need to wait for next chunk to construct full JSON.
