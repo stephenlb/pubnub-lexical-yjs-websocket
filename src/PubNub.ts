@@ -26,6 +26,12 @@ export default class PubNub {
     public pubnub: any;
     public setup: any;
 
+    // Receive Messages Function
+    messageReceiver(message: string) {
+        const decodedMessage = new Uint8Array(atob(message).split(',').map((item: string) => parseInt(item, 10)));
+        this.onmessage({ data: decodedMessage });
+    }
+
     constructor(url?: string, protocols?: string) {
         console.info(`Opening PubNub WebSocket: ${url}`);
         this.url = url || 'wss://v6.pubnub3.com?subscribeKey=demo-36&publishKey=demo-36&channel=pubnub';
@@ -80,6 +86,14 @@ export default class PubNub {
             this.pubnub = PUBNUB(this.setup);
             this.pubnub.setup = this.setup;
 
+            // Fetch Document
+            this.pubnub.history().then((messages: Array<Array<any>>) => {
+                messages[0].forEach((message: string) => {
+                    this.messageReceiver(message);
+                });
+            });
+
+            // Stream Changes
             this.pubnub.subscribe({
                 backfill: true,
                 channel: this.setup.channel,
@@ -93,8 +107,7 @@ export default class PubNub {
                     });
                 },
                 messages: (message: string) => {
-                    const decodedMessage = new Uint8Array(atob(message).split(',').map((item: string) => parseInt(item, 10)));
-                    this.onmessage({ data: decodedMessage });
+                    this.messageReceiver(message);
                 },
                 connect: () => {
                     this.readyState = this.OPEN;
@@ -301,6 +314,24 @@ PUBNUB.unsubscribe = (setup: Setup = {}): void => {
     let channel: string = setup.channel ?? PUBNUB.channel ?? defaultChannel;
     if (channel in SUBSCRIPTIONS) {
         SUBSCRIPTIONS[channel].forEach((sub: any) => sub.unsubscribe());
+    }
+};
+
+// PubNub History
+PUBNUB.history = async (setup: Setup = {}): Promise<Array<Array<any>> | false> => {
+    let subkey: string = setup.subkey ?? PUBNUB.subscribeKey ?? defaultSubkey;
+    let channel: string = setup.channel ?? PUBNUB.channel ?? defaultChannel;
+    let uuid: string = setup.uuid ?? PUBNUB.uuid ?? defaultUUID;
+    let origin: string = setup.origin ?? PUBNUB.origin ?? defaultOrigin;
+    let authkey: string = setup.authkey ?? PUBNUB.authKey ?? '';
+    let uri: string = `https://${origin}/v2/history/sub-key/${subkey}/channel/${channel}`;
+    let params: string = `uuid=${uuid}&auth=${authkey}`;
+
+    try {
+        let response = await fetch(`${uri}?${params}`);
+        return await response.json();
+    } catch (e) {
+        return false;
     }
 };
 
