@@ -7,7 +7,7 @@
  */
 //import * as React from 'react';
 import * as Y from 'yjs';
-import {$getRoot, $createParagraphNode, $createTextNode} from 'lexical';
+//import {$getRoot, $createParagraphNode, $createTextNode} from 'lexical';
 //import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
 import {LexicalComposer} from '@lexical/react/LexicalComposer';
 import {ContentEditable} from '@lexical/react/LexicalContentEditable';
@@ -47,16 +47,15 @@ const pubnubConfig = {
   subscribeKey: 'demo-36',
 };
 
+// TODO Load initial content from server
+// TODO Load initial content from server
 function initialEditorState(): void {
-  const root = $getRoot();
-  const paragraph = $createParagraphNode();
+  //const root = $getRoot();
+  //const paragraph = $createParagraphNode();
+  //const text = $createTextNode('Hello, from PubNub!'); 
 
-  // TODO Load initial content from server
-  const text = $createTextNode('Hello, from PubNub!'); 
-  // TODO Load initial content from server
-
-  paragraph.append(text);
-  root.append(paragraph);
+  //paragraph.append(text);
+  //root.append(paragraph);
 }
 
 export default function App() {
