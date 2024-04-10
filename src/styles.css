@@ -8,7 +8,7 @@
 
 body {
   margin: 0;
-  background: #eee;
+  background: #4A90E2;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, '.SFNSText-Regular',
     sans-serif;
   font-weight: 500;
@@ -447,4 +447,105 @@ i.right-align {
 
 i.justify-align {
   background-image: url(icons/justify.svg);
+}
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  font-size: 16px;
+  background-color: #4A90E2;
+  color: #333;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Header Style */
+h1 {
+  color: #FEFEF2;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 3rem;
+}
+
+/* Editor Container and Inner Styles */
+.editor-container {
+  border: 2px solid #EEEEE2;
+  border-radius: 12px;
+  overflow: hidden;
+  width: 80%;
+  max-width: 640px;
+}
+
+.editor-inner {
+  background-color: white;
+  min-height: 300px;
+  padding: 10px;
+}
+
+.editor-input {
+  min-height: 250px;
+  outline: none;
+  width: 100%;
+  padding: 10px;
+/*
+  border: 1px solid #ddd;
+  border-radius: 4px;
+*/
+  margin-bottom: 10px;
+  transition: border-color 0.3s;
+}
+
+.editor-input:focus {
+  border-color: #EE2222;
+}
+
+/* Toolbar Plugin Styles */
+.ToolbarPlugin {
+  display: flex;
+  justify-content: space-between;
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-bottom: 2px solid #EEEEE2;
+}
+
+.ToolbarPlugin button {
+  padding: 8px 12px;
+  background-color: #FFFFFF;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+  margin-right: 5px;
+  transition: background-color 0.3s;
+}
+
+.ToolbarPlugin button:hover {
+  background-color: #357ABD;
+}
+
+/* Apply specific styles to the collaborative cursor and placeholder */
+.collaboration-cursor {
+  border-left: 2px solid rgba(255, 0, 255, 0.5);
+}
+
+.editor-input::placeholder {
+  color: #aaa;
+}
+
+/* Add some animations or transitions for interactive elements */
+button, .editor-input {
+  transition: all 0.3s ease;
 }

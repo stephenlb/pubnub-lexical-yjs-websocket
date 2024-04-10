@@ -6,17 +6,17 @@
  *
  */
 //import * as React from 'react';
-import * as Y from 'yjs';
 //import {$getRoot, $createParagraphNode, $createTextNode} from 'lexical';
 //import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
+//import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
+import * as Y from 'yjs';
 import {LexicalComposer} from '@lexical/react/LexicalComposer';
 import {ContentEditable} from '@lexical/react/LexicalContentEditable';
-import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
-//import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
 import {RichTextPlugin} from '@lexical/react/LexicalRichTextPlugin';
 import {Provider} from '@lexical/yjs';
 import {WebsocketProvider} from 'y-websocket';
 import {CollaborationPlugin} from "@lexical/react/LexicalCollaborationPlugin";
+import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 
 import PubNub from './PubNub';
 import ExampleTheme from './ExampleTheme';
@@ -47,13 +47,11 @@ const pubnubConfig = {
   subscribeKey: 'demo-36',
 };
 
-// TODO Load initial content from server
-// TODO Load initial content from server
+// TODO Optionally load additional content
 function initialEditorState(): void {
   //const root = $getRoot();
   //const paragraph = $createParagraphNode();
   //const text = $createTextNode('Hello, from PubNub!'); 
-
   //paragraph.append(text);
   //root.append(paragraph);
 }
