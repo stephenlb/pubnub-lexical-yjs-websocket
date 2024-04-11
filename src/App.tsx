@@ -6,9 +6,9 @@
  *
  */
 //import * as React from 'react';
-//import {$getRoot, $createParagraphNode, $createTextNode} from 'lexical';
 //import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
 //import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
+import {$getRoot, $createParagraphNode, $createTextNode} from 'lexical';
 import * as Y from 'yjs';
 import {LexicalComposer} from '@lexical/react/LexicalComposer';
 import {ContentEditable} from '@lexical/react/LexicalContentEditable';
@@ -22,13 +22,13 @@ import PubNub from './PubNub';
 import ExampleTheme from './ExampleTheme';
 import ToolbarPlugin from './plugins/ToolbarPlugin';
 
-function Placeholder() {
-  return <div className="editor-placeholder">Loading...</div>;
-}
+/*function Placeholder() {
+  return <div className="editor-placeholder"></div>;
+}*/
 
 const editorConfig = {
   editorState: null,
-  namespace: 'documentID-212-policy-management-doc',
+  namespace: 'documentID-223-policy-management-doc',
   //nodes: [],
   // Handling of errors during update
   onError(error: Error) {
@@ -49,11 +49,11 @@ const pubnubConfig = {
 
 // TODO Optionally load additional content
 function initialEditorState(): void {
-  //const root = $getRoot();
-  //const paragraph = $createParagraphNode();
-  //const text = $createTextNode('Hello, from PubNub!'); 
-  //paragraph.append(text);
-  //root.append(paragraph);
+  const root = $getRoot();
+  const paragraph = $createParagraphNode();
+  const text = $createTextNode(''); 
+  paragraph.append(text);
+  root.append(paragraph);
 }
 
 export default function App() {
@@ -64,7 +64,7 @@ export default function App() {
         <div id="yjs-collaboration-plugin-container" className="editor-inner">
           <RichTextPlugin
             contentEditable={<ContentEditable className="editor-input" />}
-            placeholder={<Placeholder />}
+            placeholder={<span></span>}
             ErrorBoundary={LexicalErrorBoundary}
           />
           <CollaborationPlugin
@@ -83,7 +83,7 @@ export default function App() {
             }}
             id="yjs-collaboration-plugin"
             initialEditorState={initialEditorState}
-            shouldBootstrap={true}
+            shouldBootstrap={false}
           />
         </div>
       </div>
