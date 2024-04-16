@@ -34,7 +34,7 @@ export default class PubNub {
 
     constructor(url?: string, protocols?: string) {
         console.info(`Opening PubNub WebSocket: ${url}`);
-        this.url = url || 'wss://v6.pubnub3.com?subscribeKey=demo-36&publishKey=demo-36&channel=pubnub';
+        this.url = url || 'wss://v6.pubnub3.com?subscribeKey=sub-c-2c11d42e-12db-11e4-897a-02ee2ddab7fe&publishKey=pub-c-46752c06-6fcc-455c-8447-179714574e74&channel=pubnub';
         this.protocol = protocols || 'Sec-WebSocket-Protocol';
         const params = extractParams(this.url);
         const bits = this.url.split('/');
@@ -163,8 +163,8 @@ const PUBNUB = ((setup: Setup): typeof PUBNUB => {
     return PUBNUB;
 }) as any;
 
-const defaultSubkey: string = 'demo-36';
-const defaultPubkey: string = 'demo-36';
+const defaultSubkey: string = 'sub-c-2c11d42e-12db-11e4-897a-02ee2ddab7fe';
+const defaultPubkey: string = 'pub-c-46752c06-6fcc-455c-8447-179714574e74';
 const defaultChannel: string = 'pubnub';
 const defaultOrigin: string = 'v6.pubnub3.com'; // HTTP/3 and IPv6
 const defaultUUID: string = `uuid-${+new Date()}`;

@@ -43,8 +43,8 @@ const pubnubConfig = {
   auth: '',
   username: 'user-' + Math.random().toString(36).substr(2, 4),
   userId: 'user-id-' + Math.random().toString(36).substr(2, 9),
-  publishKey: 'demo-36',
-  subscribeKey: 'demo-36',
+  publishKey: 'pub-c-46752c06-6fcc-455c-8447-179714574e74',
+  subscribeKey: 'sub-c-2c11d42e-12db-11e4-897a-02ee2ddab7fe',
 };
 
 // TODO Optionally load additional content
